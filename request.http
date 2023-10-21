@@ -1,0 +1,94 @@
+### Users TEST
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+    "name":"bujang",
+    "email":"bujang4@gmail.com",
+    "password":"123",
+    "gender":"P",
+    "identityNumber":100629,
+    "address":"Jakarta"
+
+}
+
+###
+GET http://localhost:3000/api/v1/users
+
+###
+GET http://localhost:3000/api/v1/users/105
+
+### End Users TEST
+
+###===================================###
+
+### Account TEST
+
+POST http://localhost:3000/api/v1/accounts
+Content-Type: application/json
+
+{
+    "bankName":"VISA",
+    "userId":114,
+    "balance":95000
+
+}
+
+### 
+GET http://localhost:3000/api/v1/accounts
+
+###
+GET http://localhost:3000/api/v1/accounts/105
+
+###
+### End Account TEST
+
+
+### Transactions TEST
+###
+POST http://localhost:3000/api/v1/transaction
+Content-Type: application/json
+
+{
+    "senderId":51,
+    "destinationId":51,
+    "amount":11000
+}
+
+###
+GET http://localhost:3000/api/v1/transaction 
+
+###
+GET http://localhost:3000/api/v1/transaction/1
+
+### End Transactions TEST
+
+
+# Authenticate 
+###
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+    "name":"sabrina",
+    "email":"sabrina3@mail.com",
+    "password":"sabrina123",
+    "password_confirmation":"sabrina123"
+}
+
+
+###
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email":"sabrina3@mail.com",
+    "password":"sabrina123"
+}
+
+
+###
+GET http://localhost:3000/api/v1/auth/authenticate
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTI1LCJpYXQiOjE2OTc4NjA3MjB9.01HAv0kN7Zg_CNKGu-TS3JfiA3A41x7b8oSz3_FLPZc
+# End Authenticate
+

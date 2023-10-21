@@ -1,0 +1,909 @@
+openapi: 3.0.3
+info:
+  title: Bank System Binar 
+  description: |-
+    Aplikasi ini berkaitan dengan BANK API SYSTEM
+  contact:
+    email: hafidnurfirmansyah10@mail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1
+tags:
+  - name: User
+    description: Operations related to users
+  - name: Account
+    description: Operations related to Account Bank
+  - name: Transactions
+    description: Operations related to Transactions Bank
+  - name: Authentication
+    description: Operations related to Authentication User
+
+paths:
+  /users:
+    post:
+      tags:
+        - User
+      operationId: post-create-new-user
+      summary: Create a new user
+      description: Creates a new user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUser"
+      responses:
+        "201":
+          description: Successful user creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                        $ref: "#/components/schemas/UserModel"  
+                        profile:
+                            properties:
+                              $ref : "#/components/requestBodies/CreatePost"
+        "400":
+          description: name ,email ,or password undifined
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/UserFieldMising"
+        "404":
+          description: Email Alrady registered
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/UserExist"
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"
+                  - $ref: "#/components/schemas/UserNotFound"
+                                                      
+    get:
+      tags:
+        - User
+      operationId: get-fetch-all-user
+      summary: Get all users
+      description: Retrieves a list of all registered users.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: 
+                          $ref : "#/components/schemas/UserModel" 
+        "404":
+          description: Failed to find Users operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+                  - $ref: "#/components/schemas/UserNotFound"
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"
+                  - $ref: "#/components/schemas/UserNotFound"                                 
+  "/users/{userId}":
+    get:
+      tags:
+        - User
+      operationId: get-fetch-user-detail
+      summary: Get user details
+      description: Retrieves details of a specific user.
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the user to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/UserModel"
+        "404":
+          description: Failed to find Users operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                 - $ref: "#/components/schemas/UserNotFound2"
+                 
+        "400":
+          description: User Id Undifined
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+                  - $ref: "#/components/schemas/UserNotFound"
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"
+                  - $ref: "#/components/schemas/UserNotFound"
+# Account
+  /accounts:
+    post:
+      tags:
+        - Account
+      operationId: post-create-Account
+      summary: Create a new Account
+      description: Creates a new Account with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAccount"
+      responses:
+        "201":
+          description: Successful post creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AccountModel"
+        "400":
+          description: Field Missing 
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+        "404":
+          description: User Id Not found in database
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/UserNotFound2"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"
+    get:
+      tags:
+        - Account
+      operationId: Get-Account
+      summary: Get All Account
+      description: Get all Account with the provided information.
+      responses:
+        "200":
+          description: Successful post creation
+          content:
+            application/json:
+              schema:
+               allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: 
+                          $ref: "#/components/schemas/AccountDetailModel"              
+        "400":
+          description: Field Missing 
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+                  - type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"  
+  "/accounts/{accountsId}":
+    get:
+      tags:
+        - Account
+      operationId: Get-Account By id
+      summary: Get Account By Id
+      description: Get Account By Id with the provided information.
+      parameters:
+        - in: path
+          name: accountsId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the accountsId to retrieve.
+      responses:
+        "200":
+          description: Successful Get Account 
+          content:
+            application/json:
+              schema:
+               allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        $ref: "#/components/schemas/AccountDetailModel"              
+        "400":
+          description: Field Missing 
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+                  - type: object
+
+        "404":
+          description: Bank Account Not found in database
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/AccountNotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"                              
+# End Account
+   
+# Transactions
+  /transaction:
+    post :
+      tags:
+        - "Transactions"
+      operationId: post-create-transactions
+      summary: Create a new transactions
+      description: Creates a new transactions with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateTransaction"
+      responses:
+        "201":
+          description: Successful post creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/TransactionsModel"
+        "404":
+          description: IdSender(Account) Or IdDestination(Account) dont exist in database
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/AccountNotFound"                
+        "400":
+          description: Field Missing 
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicFailResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"  
+    get :
+      tags:
+        - "Transactions"
+      operationId: get-all-transactions
+      summary: Get all transactions
+      description: Get all transactions with the provided information.
+      responses:
+        "200":
+          description: Successful post creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                            $ref: "#/components/schemas/TransactionsModel"
+  "/transaction/{idTransaction}":
+    get :
+      tags:
+        - "Transactions"
+      operationId: get-detail-transactions
+      summary: Get transactions detail
+      description: Get detail transactions with the provided information.
+      parameters:
+        - in: path
+          name: idTransaction
+          schema:
+            type: integer
+          required: true
+          description: The ID of the accountsId to retrieve.
+      responses:
+        "201":
+          description: Successful post creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                          $ref: "#/components/schemas/TransactionsDetail"
+        "404":
+          description: transactions not found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/TransactionsNotFound"                
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServerFailResponse"    
+#End Transactions
+ 
+
+
+# Authentication
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      operationId: post-create-new-user
+      summary: Create a new user
+      description: Creates a new user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/RegisterRequest"
+      responses:
+        "201":
+          description: Successful user creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/RegisterModel"
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      operationId: login-user
+      summary: Login User
+      description: Creates a new user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequest"
+      responses:
+        "201":
+          description: Successful user creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/LoginModel"
+  /auth/authenticate:
+    get:
+      tags:
+        - Authentication
+      operationId: post-create-new-user
+      summary: check user is Authentication
+      description: Creates a new user with the provided information.
+      responses:
+        "201":
+          description: Successful user creation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                        $ref: "#/components/schemas/UserModel"  
+                        profile:
+                            properties:
+                              $ref : "#/components/requestBodies/CreatePost"
+      security:
+        - bearerAuth: []
+
+# End Authentication
+
+  
+components:
+  securitySchemes:
+    bearerAuth:       
+      type: http
+      scheme: bearer       
+      bearerFormat: JWT
+  schemas:
+    BasicResponse:
+      title: BasicResponse
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "OK"
+    BasicFailResponse : 
+      title: "BasicFailResponse"
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example : "Bad Request"
+    ServerFailResponse :
+      title: "ServerFailResponse"
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "Internal Server Error"
+    # name email or password Undifined
+    UserFieldMising :
+      title: "ServerFailResponse"
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "name ,email,or password undifined "
+    #end name email or password Undifined
+
+    #user alredy in database
+    UserExist :
+      title: "ServerFailResponse"
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "Use another email , email already registered"
+    #end user alredy in database
+
+    # Failed to find Users operation
+    UserNotFound2 :
+      title: UserNotFound
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "Data Users Not Found "
+        data:
+          type: string
+          example : null    
+    # end Failed to find Users operation
+    UserNotFound :
+      title: UserNotFound
+      type: object
+      properties:
+        data:
+          type: string
+          example : null    
+    UserModel:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "bujang"
+        email:
+          type: string
+          example: "bujang@mail.com"
+        password : 
+          type: string
+          example: "12345678"
+        profile:
+          type: object
+          properties:
+            id: 
+              type: integer
+              example : 1
+            gender:
+              type: string
+              example : "P"
+            identityNumber:
+              type: integer
+              example : 100629
+            address:
+              type: string
+              example : "Jakarta"
+            usersId :
+              type: integer
+              example : 1
+
+    # Account
+    AccountModel :
+      title: AccountModel
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        bank_name :
+          type: string
+          example: "VISA"
+        bank_account_number:
+          type: integer
+          example : 5675
+        balance :
+          type: string
+          example : "95000"
+        userId : 
+          type: integer
+          example : 1
+    AccountDetailModel : 
+      title: AccountDetailModel
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        bank_name :
+          type: string
+          example: "VISA"
+        bank_account_number:
+          type: integer
+          example : 5675
+        balance :
+          type: string
+          example : "95000"
+        userId :
+          type: integer
+          example : 1
+        Users :
+          properties:
+            name:
+              type: string
+              example : 'joko'
+            email:
+              type: string
+              example : 'joko2@gmail.com'  
+    AccountNotFound:
+      title: AccountNotFound
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "Bank Account Not Found"
+        data:
+          type: string
+          example : null   
+        
+  #End Account
+
+  #Transactions
+    TransactionsModel :
+      title: TransactionsModel
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        senderId :
+          type: integer
+          example: 1
+        destinationId:
+          type: integer
+          example : 2
+        amount :
+          type: string
+          example : "11000"
+    TransactionsDetail :
+      title: TransactionsDetail
+      type: object
+      properties:
+        id :
+          type: integer
+          example : 1
+        amount :
+          type: integer
+          example : 1000
+        userPengirim :
+          properties:
+            name:
+              type: string
+              example : 'joko4'
+            email: 
+              type: string
+              example : "joko4@mail.com"
+            profile:
+              properties:
+                id :
+                  type: integer
+                  example : 1
+                gender: 
+                  type: string
+                  example : 'L'
+                identityNumber:
+                  type: integer
+                  example : 100627
+                address :
+                  type: string
+                  example : "Surabaya"
+                userId :
+                  type: integer
+                  example :  1
+        userPenerima :
+          properties:
+            name:
+              type: string
+              example : 'joko2'
+            email: 
+              type: string
+              example : "joko2@mail.com"
+            profile:
+              properties:
+                id :
+                  type: integer
+                  example : 2
+                gender: 
+                  type: string
+                  example : 'L'
+                identityNumber:
+                  type: integer
+                  example : 100629
+                address :
+                  type: string
+                  example : "Surabaya"
+                userId :
+                  type: integer
+                  example :  2
+    TransactionsNotFound :
+      title: TransactionsNotFound
+      type: object
+      properties:
+        status:
+          type: boolean
+          example : false
+        message:
+          type: string
+          example : "Transaction Not Found"
+        data:
+          type: string
+          example : null   
+
+  #End Transactions 
+   
+
+  
+  # Login And Register
+    RegisterModel :
+      title: Register
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example : "Created"
+        err :
+          type: string
+          example: null
+        data:
+          properties:
+            id:
+              type: integer
+              example: 1
+            name :
+              type: string
+              example: "sabrina"
+            email:
+              type: string
+              example : "sabrina2@mail.com"
+            password :
+              type: string
+              example : "$2b$10$6VdapmhiYvBl3i.jQ78jbOOukW6hDyF6WnmTPOC43rIETwd/t2M1G"
+    LoginModel :
+      title: Login
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example : "OK"
+        err :
+          type: string
+          example: null
+        data:
+          properties:
+            user :
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name :
+                  type: string
+                  example: "sabrina"
+                email:
+                  type: string
+                  example : "sabrina2@mail.com"
+                password :
+                  type: string
+                  example : "$2b$10$6VdapmhiYvBl3i.jQ78jbOOukW6hDyF6WnmTPOC43rIETwd/t2M1G"
+                token :
+                  type: string
+                  example : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTE4LCJpYXQiOjE2OTc3OTIxODl9.Mqy7EDrJy0hGounEcCFWYtmUlMP1wSBqzUGLHo8j7Lg"
+  #End Login And Register
+  requestBodies:
+    CreateUser:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "bujang"
+              email:
+                type: string
+                example: "bujang@mail.com"
+              password:
+                type: string
+                example : "12345678"
+              gender:
+                type: string
+                example: "P"
+              identityNumber :
+                type: integer
+                example: 100629
+              address :
+                type: string
+                example: "Jakarta"
+    CreatePost:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "Software Development Life Cycle"
+              categories:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Programming"
+              authorId:
+                type: integer
+                example: 1
+    # Account Body
+    CreateAccount :
+      content:
+        application/json:
+          schema :
+            type: object
+            properties:
+              bankName:
+                type: string
+                example : "VISA"
+              balance :
+                type: integer
+                example : 95000
+              userId :
+                type: integer
+                example: 1
+    #Transactions
+    CreateTransaction:
+      content:
+        application/json:
+          schema :
+            type: object
+            properties:
+              senderId :
+                type: integer
+                example : 1
+              destinationId :
+                type: integer
+                example : 2
+              amount : 
+                type: integer
+                example : 11000   
+              
+    #Register
+    RegisterRequest:
+      content:
+        application/json:
+          schema :
+            type: object
+            properties:
+              name :
+                type: string
+                example : "sabrina"
+              email :
+                type: string
+                example : "sabrina2@mail.com"
+              password : 
+                type: string
+                example : "sabrina123" 
+              password_confirmation: 
+                type: string
+                example : "sabrina123"
+
+    # Login
+    LoginRequest :
+      content:
+        application/json:
+          schema :
+            type: object
+            properties:
+              email :
+                type: string
+                example : "sabrina2@mail.com"
+              password : 
+                type: string
+                example : "sabrina123" 
