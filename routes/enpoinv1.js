@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { restrict } = require('../middleware/auth.middlewares');
 const {
+  // 
   createUser,
   getAllUsers,
   getUserDetail,
